@@ -14,5 +14,5 @@ Upon first start, the program automatically generates the SQL schema.
 
 Technologies used (all new to me):
 * Framework: fastapi
-* ORM: SQLModel (SQLAlchemy derivative)
-* SQLite
+* ORM: SQLAlchemy + SQLModel
+* Database: SQLite

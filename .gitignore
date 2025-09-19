@@ -1,5 +1,5 @@
 *.py[c,o]
 /**/__pycache__
-.idea
+/.idea/
 *.egg-info
 /build/
