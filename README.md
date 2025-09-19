@@ -12,6 +12,7 @@ The server listens to localhost port 8080
 
 Upon first start, the program automatically generates the SQL schema.
 
-Technologies used:
+Technologies used (all new to me):
 * Framework: fastapi
 * ORM: SQLModel (SQLAlchemy derivative)
+* SQLite
