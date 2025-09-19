@@ -3,7 +3,7 @@
 ## Running the project
 Every command is assumed to be run at the root of the project
 ### Setup
-> pip init .
+> pip install -e .
 
 ### Running
 > python api/main.py
