@@ -1,11 +1,11 @@
-Coding assignment for a company
+# Coding assignment for a company
 
-# Running the project
+## Running the project
 Every command is assumed to be run at the root of the project
-## Setup
+### Setup
 > pip init .
 
-# Running
+### Running
 > python api/main.py
 
 The server listens to localhost port 8080
