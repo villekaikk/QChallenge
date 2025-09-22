@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
-from sqlmodel import SQLModel
+from sqlmodel import SQLModel, text
 
 from models.Message import MessageCreate, Message
 from models.User import User, UserCreate
@@ -16,6 +16,9 @@ class Database:
         self._engine = create_engine(db_url)
         self._session_gen: sessionmaker = sessionmaker(autocommit=False, autoflush=False, bind=self._engine)
         SQLModel.metadata.create_all(self._engine)
+        if db_url.startswith("sqlite:///"):
+            with self._engine.connect() as conn:
+                conn.execute(text("PRAGMA foreign_keys=ON"))
 
     @classmethod
     def get_db(cls, db_url: str = None):
@@ -40,7 +43,7 @@ class Database:
 
         except Exception as e:
             print(f"Failed to create new user: {e}")
-            raise Exception("Failed to nwe create user")
+            raise Exception("Failed to create new user")
 
     def update_user(self, user_id: int, user: UserCreate) -> User | None:
 
