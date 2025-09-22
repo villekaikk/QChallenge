@@ -22,7 +22,7 @@ async def create_user(new_user: UserCreate, db: Database = Depends(Database.get_
 
 
 @app.put("/api/users/{user_id}", status_code=status.HTTP_200_OK)
-async def create_update(user_id: int, user: UserCreate, db: Database = Depends(Database.get_db)) -> User:
+async def update_user(user_id: int, user: UserCreate, db: Database = Depends(Database.get_db)) -> User:
     updated_user = db.update_user(user_id, user)
     if updated_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User {user_id} not found")
