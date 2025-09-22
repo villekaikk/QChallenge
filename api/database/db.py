@@ -1,10 +1,8 @@
-from sqlalchemy import create_engine, desc
-from sqlalchemy.orm import sessionmaker
-from sqlmodel import SQLModel
+from sqlmodel import SQLModel, create_engine, Session, select
 
-from models.Message import MessageCreate, Message
-from models.User import User, UserCreate
-from models.Customer import Customer, CustomerCreate
+from models.Message import Message
+from models.User import User
+from models.Customer import Customer
 
 
 class Database:
@@ -14,7 +12,6 @@ class Database:
     def __init__(self, db_url: str):
 
         self._engine = create_engine(db_url)
-        self._session_gen: sessionmaker = sessionmaker(autocommit=False, autoflush=False, bind=self._engine)
         SQLModel.metadata.create_all(self._engine)
 
     @classmethod
@@ -28,32 +25,31 @@ class Database:
 
         return cls.instance
 
-    def create_user(self, new_user: UserCreate) -> User:
+    def create_user(self, new_user: User) -> User:
 
         try:
-            with self._session_gen() as session:
-                db_user = User.model_validate(new_user)
-                session.add(db_user)
+            with Session(self._engine) as session:
+                session.add(new_user)
                 session.commit()
-                session.refresh(db_user)
-                return db_user
+                print(f"Created new user with id {new_user.id}")
+                return new_user
 
         except Exception as e:
             print(f"Failed to create new user: {e}")
             raise Exception("Failed to nwe create user")
 
-    def update_user(self, user_id: int, user: UserCreate) -> User | None:
+    def update_user(self, user_id: int, user: User) -> User | None:
 
         try:
-            with self._session_gen() as session:
-                existing: User | None = session.query(User).filter_by(id=user_id).first()
+            with Session(self._engine) as session:
+                statement = select(User).where(User.id == user_id)
+                existing: User | None = session.exec(statement).first()
                 if not existing:
                     return None
 
-                validated_user = User.model_validate(user)
-                existing.name = validated_user.name
-                existing.email = validated_user.email
-                session.refresh(existing)
+                existing.name = user.name
+                existing.email = user.email
+                session.commit()
 
                 return existing
 
@@ -61,31 +57,28 @@ class Database:
             print(f"Failed to update user: {e}")
             raise Exception("Failed to update user")
 
-    def create_customer(self, new_customer: CustomerCreate) -> Customer:
+    def create_customer(self, new_customer: Customer) -> Customer:
 
         try:
-            with self._session_gen() as session:
-                db_customer = Customer.model_validate(new_customer)
-                session.add(db_customer)
+            with Session(self._engine) as session:
+                session.add(new_customer)
                 session.commit()
-                session.refresh(db_customer)
+                print(f"Created new customer with id {new_customer.id}")
 
-                return db_customer
+                return new_customer
 
         except Exception as e:
             print(f"Failed to create new customer: {e}")
             raise Exception("Failed to new create customer")
 
-    def create_message(self, new_message: MessageCreate):
+    def create_message(self, new_message: Message):
 
         try:
-            with self._session_gen() as session:
-                db_message = Message.model_validate(new_message)
-                session.add(db_message)
+            with Session(self._engine) as session:
+                session.add(new_message)
                 session.commit()
-                session.refresh(db_message)
 
-                return db_message
+                return new_message
 
         except Exception as e:
             print(f"Failed to create new message: {e}")
@@ -95,8 +88,9 @@ class Database:
     def get_all_messages(self) -> list[Message]:
 
         try:
-            with self._session_gen() as session:
-                messages = session.query(Message).order_by(Message.created_at).all()
+            with Session(self._engine) as session:
+                statement = select(Message).order_by(Message.created_at)
+                messages = session.exec(statement).all()
                 return messages or []
 
         except Exception as e:
