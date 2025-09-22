@@ -1,4 +1,6 @@
-from sqlalchemy import create_engine, desc
+from typing import Self
+
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlmodel import SQLModel
 
@@ -9,7 +11,7 @@ from models.Customer import Customer, CustomerCreate
 
 class Database:
 
-    instance = None
+    _instance = None
 
     def __init__(self, db_url: str):
 
@@ -18,15 +20,15 @@ class Database:
         SQLModel.metadata.create_all(self._engine)
 
     @classmethod
-    def get_db(cls, db_url: str = None):
+    def get_db(cls, db_url: str = None) -> Self:
 
-        if cls.instance is None:
+        if cls._instance is None:
             if db_url is None:
                 raise ValueError("db_url cannot be None")
 
-            cls.instance = Database(db_url)
+            cls._instance = Database(db_url)
 
-        return cls.instance
+        return cls._instance
 
     def create_user(self, new_user: UserCreate) -> User:
 
@@ -40,7 +42,7 @@ class Database:
 
         except Exception as e:
             print(f"Failed to create new user: {e}")
-            raise Exception("Failed to nwe create user")
+            raise Exception("Failed to new create user")
 
     def update_user(self, user_id: int, user: UserCreate) -> User | None:
 
@@ -76,7 +78,7 @@ class Database:
             print(f"Failed to create new customer: {e}")
             raise Exception("Failed to new create customer")
 
-    def create_message(self, new_message: MessageCreate):
+    def create_message(self, new_message: MessageCreate) -> Message:
 
         try:
             with self._session_gen() as session:
