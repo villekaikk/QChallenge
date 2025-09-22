@@ -4,8 +4,8 @@ from typing import TYPE_CHECKING, Optional
 from sqlmodel import SQLModel, Field, Relationship
 
 if TYPE_CHECKING:
-    from models.User import User
-    from models.Message import Message
+    from .User import User
+    from .Message import Message
 
 
 class Customer(SQLModel, table=True):

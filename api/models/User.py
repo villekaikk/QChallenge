@@ -1,9 +1,10 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlmodel import SQLModel, Field, Relationship
 
-from models.Message import Message
-from models.Customer import Customer
+if TYPE_CHECKING:
+    from .Message import Message
+    from .Customer import Customer
 
 
 class User(SQLModel, table=True):
