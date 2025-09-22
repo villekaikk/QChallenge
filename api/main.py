@@ -7,7 +7,7 @@ from models.Message import MessageCreate, Message
 
 from database.db import Database
 
-DATABASE_URL = "sqlite:///./test.db"
+DATABASE_URL = "sqlite:///./platform.db"
 _ = Database.get_db(DATABASE_URL)   # Init DB with the connection string
 app = FastAPI()
 
