@@ -1,3 +1,5 @@
+from typing import Optional
+
 from sqlmodel import SQLModel, create_engine, Session, select
 
 from models.Message import Message
@@ -32,13 +34,14 @@ class Database:
                 session.add(new_user)
                 session.commit()
                 print(f"Created new user with id {new_user.id}")
+
                 return new_user
 
         except Exception as e:
             print(f"Failed to create new user: {e}")
             raise Exception("Failed to nwe create user")
 
-    def update_user(self, user_id: int, user: User) -> User | None:
+    def update_user(self, user_id: int, user: User) -> Optional[User]:
 
         try:
             with Session(self._engine) as session:
@@ -50,6 +53,7 @@ class Database:
                 existing.name = user.name
                 existing.email = user.email
                 session.commit()
+                print(f"Updated user with id {existing.id}")
 
                 return existing
 
@@ -77,6 +81,7 @@ class Database:
             with Session(self._engine) as session:
                 session.add(new_message)
                 session.commit()
+                print(f"Created new message with id {new_message.id}")
 
                 return new_message
 
