@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Depends, HTTPException
 from starlette import status
 
-from models.User import UserCreate, User
-from models.Customer import CustomerCreate, Customer
-from models.Message import MessageCreate, Message
+from models.User import User
+from models.Customer import Customer
+from models.Message import Message
 
 from database.db import Database
 
@@ -13,7 +13,7 @@ app = FastAPI()
 
 
 @app.post("/api/users", status_code=status.HTTP_201_CREATED)
-async def create_user(new_user: UserCreate, db: Database = Depends(Database.get_db)) -> User:
+async def create_user(new_user: User, db: Database = Depends(Database.get_db)) -> User:
     created_user = db.create_user(new_user)
     if created_user is None:
         raise HTTPException(status_code=status.INTERNAL_SERVER_ERROR, detail="User creation failed")
@@ -22,7 +22,7 @@ async def create_user(new_user: UserCreate, db: Database = Depends(Database.get_
 
 
 @app.put("/api/users/{user_id}", status_code=status.HTTP_200_OK)
-async def create_update(user_id: int, user: UserCreate, db: Database = Depends(Database.get_db)) -> User:
+async def create_update(user_id: int, user: User, db: Database = Depends(Database.get_db)) -> User:
     updated_user = db.update_user(user_id, user)
     if updated_user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"User {user_id} not found")
@@ -31,7 +31,7 @@ async def create_update(user_id: int, user: UserCreate, db: Database = Depends(D
 
 
 @app.post("/api/customers", status_code=status.HTTP_201_CREATED)
-async def create_user(new_customer: CustomerCreate, db: Database = Depends(Database.get_db)) -> Customer:
+async def create_user(new_customer: Customer, db: Database = Depends(Database.get_db)) -> Customer:
     created_customer = db.create_customer(new_customer)
     if created_customer is None:
         raise HTTPException(status_code=status.INTERNAL_SERVER_ERROR, detail="Customer creation failed")
@@ -40,7 +40,7 @@ async def create_user(new_customer: CustomerCreate, db: Database = Depends(Datab
 
 
 @app.post("/api/messages", status_code=status.HTTP_201_CREATED)
-async def create_message(new_message: MessageCreate, db: Database = Depends(Database.get_db)) -> Message:
+async def create_message(new_message: Message, db: Database = Depends(Database.get_db)) -> Message:
     message_created = db.create_message(new_message)
     if message_created is None:
         raise HTTPException(status_code=status.INTERNAL_SERVER_ERROR, detail="Message creation failed")

@@ -1,19 +1,18 @@
 from datetime import datetime
+from typing import TYPE_CHECKING, Optional
 
-from pydantic import BaseModel
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+
+if TYPE_CHECKING:
+    from .User import User
+    from .Customer import Customer
 
 
 class Message(SQLModel, table=True):
-    id: int | None  = Field(default=None, primary_key=True)
+    id: Optional[int]  = Field(default=None, primary_key=True, index=True)
     body: str = Field(nullable=False)
-    created_at: datetime = Field(nullable=False)
     customer_id: int = Field(foreign_key="customer.id")
     user_id: int = Field(foreign_key="user.id")
-
-
-class MessageCreate(BaseModel):
-    body: str
-    customer_id: int
-    user_id: int
-    created_at: datetime
+    customer: Optional["Customer"] = Relationship(back_populates="messages")
+    user: Optional["User"] = Relationship(back_populates="messages")
+    created_at: Optional[datetime] = Field(default_factory=lambda: datetime.now())
